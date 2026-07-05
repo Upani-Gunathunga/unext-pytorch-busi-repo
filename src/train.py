@@ -65,7 +65,8 @@ def main():
         # crashes AND against overfitting past the best epoch
         if avg_val_loss < best_val_loss:
             best_val_loss = avg_val_loss
-            torch.save(model.state_dict(), "results/unext_busi_best.pth")
+            torch.save(model.state_dict(), "/content/drive/MyDrive/unext-busi-checkpoints/unext_busi_best.pth")
+            #torch.save(model.state_dict(), "results/unext_busi_best.pth")
             print(f"  -> New best model saved (val loss {avg_val_loss:.4f})")
 
     print(f"Training complete. Best val loss achieved: {best_val_loss:.4f}")
