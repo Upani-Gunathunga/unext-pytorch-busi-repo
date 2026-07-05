@@ -24,7 +24,9 @@ def main():
     criterion = DiceBCELoss()
     optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
 
-    num_epochs = 20  # keep small for a first real test; we'll increase later on Colab
+    num_epochs = 70  # lowered from 100 -- val loss stopped improving around epoch 60-65 last run
+
+    best_val_loss = float('inf')  # tracks the best (lowest) val loss seen so far
 
     for epoch in range(num_epochs):
         # ---- Training phase ----
@@ -59,9 +61,14 @@ def main():
 
         print(f"Epoch {epoch+1}/{num_epochs} | Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f}")
 
-    # Save the trained weights
-    torch.save(model.state_dict(), "results/unext_busi.pth")
-    print("Model saved to results/unext_busi.pth")
+        # Save checkpoint whenever validation loss improves -- protects against
+        # crashes AND against overfitting past the best epoch
+        if avg_val_loss < best_val_loss:
+            best_val_loss = avg_val_loss
+            torch.save(model.state_dict(), "results/unext_busi_best.pth")
+            print(f"  -> New best model saved (val loss {avg_val_loss:.4f})")
+
+    print(f"Training complete. Best val loss achieved: {best_val_loss:.4f}")
 
 if __name__ == "__main__":
     main()
